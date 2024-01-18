@@ -6,95 +6,27 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            body {
-                background-image: url('bg.jpg');
-                background-size: cover;
-                background-repeat: no-repeat;
-                /* Your additional CSS styling goes here */
-            }
-            
-            form {
-                margin-top: 20px;
-            }
-
-            label {
-                display: block;
-                margin-bottom: 5px;
-            }
-
-            input {
-                margin-bottom: 10px;
-            }
-
-            button {
-                padding: 10px;
-                background-color: #4CAF50;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-            h2 {
-                font-size: 20px;
-                font-weight: bold;
-                margin-top: 20px;
-            }
-        </style>
-        <title>Diabetes Prediction</title>
-    </head>
-    <body>
-        <!-- Your HTML content goes here -->
-
-        <form method="post" action="/">
-            <label>Pregnancies:</label>
-            <input type="text" name="input_1" required><br>
-
-            <label>Glucose:</label>
-            <input type="text" name="input_2" required><br>
-
-            <label>Enter Value of BloodPressure:</label>
-            <input type="text" name="input_3" required><br>
-
-            <label>Enter Value of SkinThickness:</label>
-            <input type="text" name="input_4" required><br>
-
-            <label>Enter Value of Insulin:</label>
-            <input type="text" name="input_5" required><br>
-
-            <label>Enter Value of BMI:</label>
-            <input type="text" name="input_6" required><br>
-
-            <label>Enter Value of DiabetesPedigreeFunction:</label>
-            <input type="text" name="input_7" required><br>
-
-            <label>Enter Value of Age:</label>
-            <input type="text" name="input_8" required><br>
-
-            <button type="submit">Predict</button>
-        </form>
-
-        {% if prediction %}
-            <h2 style="color: {{ color }}; font-weight: bold;">{{ prediction }}</h2>
-        {% endif %}
-    </body>
-    </html>
-    """
+    return render_template('index.html', prediction=None, color=None)
 
 @app.route('/', methods=['POST'])
 def predict():
-    inputs = [float(request.form[f'input_{i+1}']) for i in range(8)]
+    # Extract form data
+    p1 = float(request.form['input_1'])
+    p2 = float(request.form['input_2'])
+    p3 = float(request.form['input_3'])
+    p4 = float(request.form['input_4'])
+    p5 = float(request.form['input_5'])
+    p6 = float(request.form['input_6'])
+    p7 = float(request.form['input_7'])
+    p8 = float(request.form['input_8'])
 
+    # Load the model
     model = joblib.load('model_joblib_diabetes')
-    result = model.predict([inputs])
 
+    # Make prediction
+    result = model.predict([[p1, p2, p3, p4, p5, p6, p7, p8]])
+
+    # Set prediction result and color
     if result == 0:
         prediction = 'Non-Diabetic'
         color = 'green'
@@ -105,4 +37,4 @@ def predict():
     return render_template('index.html', prediction=prediction, color=color)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(debug=True)
