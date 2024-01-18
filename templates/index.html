@@ -31,11 +31,11 @@
             <input type="text" name="input_8" required><br>
 
             <button type="submit">Predict</button>
+
+            <h2 style="color: {{ color }}; font-weight: bold;">{{ prediction }}</h2>
         </form>
 
-        {% if prediction %}
-            <h2 style="color: {{ color }}; font-weight: bold;">{{ prediction }}</h2>
-        {% endif %}
+        
     </div>
 </body>
 </html>
